@@ -1,62 +1,54 @@
-var store="";
-var store1="";
+let store = "";
+let store1 = "";
 
-$(".row").click(function(){
-    
-    var sym = $(this).attr("class").split(" ")[1];
-    var escapedSym = $.escapeSelector(sym);
-    $("."+escapedSym).addClass("clicked");
-    setTimeout(function(){
-        $("."+escapedSym).removeClass("clicked");
-    },100);
+document.querySelectorAll(".row").forEach(row => {
+    row.addEventListener("click", function() {
+        let sym = this.classList[1]; 
+        let elements = document.querySelectorAll("." + CSS.escape(sym));
 
-    if(sym === "="){
-        try{
-            store= store.replace(/\×/g, "*");
-            store= store.replace(/\÷/g, "/");
-            var result=eval(store);
-            $(".show").text(result);
-            $(".answer").text("");
-            store=result;
+        elements.forEach(e => e.classList.add("clicked"));
+        setTimeout(() => {
+            elements.forEach(e => e.classList.remove("clicked"));
+        }, 100);
+
+        if (sym === "=") {
+            try {
+                store = store.replace(/\×/g, "*").replace(/\÷/g, "/");
+                let result = eval(store);
+                document.querySelector(".show").textContent = result;
+                document.querySelector(".answer").textContent = "";
+                store = result;
+            } catch (error) {
+                document.querySelector(".show").textContent = "Error";
+                document.querySelector(".answer").textContent = "";
+                store = "";
+            }
+        } 
+        
+        else if (sym === "D") {
+            store = store.toString().slice(0, -1);
+            document.querySelector(".show").textContent = store;
+            document.querySelector(".answer").textContent = store.length ? eval(store) : "";
+        } 
+        
+        else if (sym === "C") {
+            document.querySelector(".show").textContent = "0";
+            store = "";
+            document.querySelector(".answer").textContent = "";
+        } 
+        
+        else {
+            store += this.textContent;
+            store1 = store.replace(/\×/g, "*").replace(/\÷/g, "/");
+            document.querySelector(".show").textContent = store;
+            document.querySelector(".answer").textContent = store.length ? eval(store1) : "";
         }
-        catch(error){
-            $(".answer").text("");
-            $(".show").text("Error");
-            store="";
-        }
-    }
+    });
+});
 
-    else if(escapedSym==="D"){
-        store=store.toString().slice(0,-1);
-        $(".show").text(store);
-        $(".answer").text(eval(store));
-        if(store.length==0){
-            $(".answer").text("");
-        }
-    }
-
-    else if(escapedSym ==="C"){
-        $(".show").text("0");
-        store="";
-        $(".answer").text("");
-    }
-
-    else if(escapedSym!== "="){
-        store+=$("."+escapedSym).text();
-        store1= store.replace(/\×/g, "*").replace(/\÷/g, "/");
-        $(".show").text(store);
-        $(".answer").text(eval(store1));
-    }
-})
-
-$(".image").click(function(){
-    store=store.toString().slice(0,-1);
-    store1= store.replace(/\×/g, "*").replace(/\÷/g, "/");
-    $(".show").text(store);
-    $(".answer").text(eval(store1));
-    if(store.length==0){
-        $(".answer").text("");
-    }
-})
-
-
+document.querySelector(".image").addEventListener("click", function() {
+    store = store.toString().slice(0, -1);
+    store1 = store.replace(/\×/g, "*").replace(/\÷/g, "/");
+    document.querySelector(".show").textContent = store;
+    document.querySelector(".answer").textContent = store.length ? eval(store1) : "";
+});
